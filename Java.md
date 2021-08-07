@@ -1,3 +1,7 @@
+# Java内存空间
+
+
+
 # Java里面的数据结构
 
 ## HashMap
@@ -133,4 +137,177 @@ RunTimeException可能包括：空指针异常、数组越界异常、除数为0
 ### 6. 线程池的异常处理
 
 超级好的文章：[线程池异常处理详解,一文搞懂_hello world-CSDN博客_线程池抛出异常](https://blog.csdn.net/qq_20009015/article/details/100569976)
+
+
+
+# 并发
+
+## CAS
+
+以下这段代码有什么问题？
+
+```java
+public class Singleton {
+    private AtomicReference<Singleton> instance = new AtomicReference<>();
+ 
+    public Singleton getSingleton(){
+        Singleton result = instance.get();
+        if(instance.compareAndSet(null,new Singleton())){
+            result = instance.get();
+        }
+        return result;
+    }
+     
+}
+```
+
+
+
+
+
+# 线程池
+
+## 线程池基本原理
+
+### 1. 为什么要使用线程池？
+
+### 2. 线程池对任务的处理流程⭐️
+
+![截屏2021-08-05 上午12.05.49](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/截屏2021-08-05 上午12.05.49.png)
+
+```java
+public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        /*
+         * Proceed in 3 steps:
+         *
+         * 1. 如果正在运行的线程少于 corePoolSize，请尝试使用给定命令作为其第一个任务启动一个新线程。 对 addWorker 的调用以原子方式检查 runState 和 workerCount，从而通过返回 false 来防止在不应该添加线程时出现误报。
+         * 2. 如果任务可以成功排队，那么我们仍然需要仔细检查是否应该添加一个线程（因为自上次检查以来现有线程已死亡）或线程池自进入此方法后关闭。 因此，我们重新检查状态，并在必要时在停止时回滚入队，如果没有则启动一个新线程。
+         * 3. 如果我们无法排队任务，那么我们尝试添加一个新线程。 如果它失败了，我们知道我们已经关闭或饱和，因此拒绝该任务。
+         */
+        int c = ctl.get();
+    	// 1.
+        if (workerCountOf(c) < corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+    	// 2.
+        if (isRunning(c) && workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) && remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+    	// 3.
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+```
+
+#### 工作线程：
+
+线程池创建线程时， 会将线程封装成工作线程Worker，Worker执行完任务后，还会循环地获取工作队列中的任务来执行。
+
+线程池中的线程执行任务分为两种情况：
+
+1. 在`execute()`方法中创建一个线程时，会让这个线程执行当前的任务；
+2. 在这个线程执行完当前任务之后，Worker会反复从队列中获取任务来执行。
+
+### 3. 线程池的使用
+
+#### 1、线程池的创建，关键参数⭐️
+
+```java
+new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, milliseconds, runnableTaskQueue, handler);
+```
+
+* corePoolSize：核心线程数
+* maximumPoolSize：最大线程数
+* runnableTaskQueue：用于保存等待执行任务的阻塞队列
+  * ArrayBlockingQueue：基于数组的**有界**阻塞队列，FIFO
+  * LinkedBlockingQueue：基于链表的阻塞队列，FIFO，吞吐量（Executors.newFixedThreadPool)
+  * SynchronousQueue：一个不存储元素的阻塞队列，每插入一个元素必须等到另一个线程调用移除操作，否则一直阻塞在插入中。吞吐量通常高于LinkedBlockingQueue(Executors.newCachedThreadPool)
+  * PriorityBlockingQueue：一个**具有优先级的**，**无限**阻塞队列
+* RejectedExecutionHandler：饱和策略
+  * AbortPolicy：直接抛出异常
+  * CallerRunsPolicy：用调用者所在线程运行任务
+  * DiscardOldestPolicy：丢弃最近的一个任务，并执行当前任务
+  * DiscardPolicy：不处理直接丢掉，也不抛出异常
+* ThreadFactory
+* keepAliveTime：工作线程空闲的时间
+* TimeUnit：时间单位
+
+#### 2、向线程池提交任务
+
+主要有两种方法：submit 和 execute
+
+execute方法用于提交不需要返回值的任务，所以无法判断任务是否被线程池成功执行
+
+```java
+threadPool.execute(new Runnable() {
+    @Override
+    public void run() {
+        // do something
+    }
+});
+```
+
+submit方法用于提交需要返回值的任务，线程池会返回一个future类型的对象，通过future对象可以判断任务是否执行成功。
+
+调用future的get()方法可以获取到future对象返回的东西，但是线程如果没有执行结束，这个get方法会阻塞。我们可以使用get(long timeout, TimeUnit unit)方法来设置阻塞时间
+
+```java
+Future<Object> future = executor.submit(hasRetturnValuetask);
+try {
+    Object o = future.get();
+} catch (InterruptedException e) {
+    // 处理中断异常
+} catch （ExecutionException e) {
+    // 处理无法执行任务异常
+} finally {
+    executor.shutdown();
+}
+```
+
+#### 3、关闭一个线程池
+
+可以通过调用线程池的shutdown或者shutdownNow方法来关闭线程池
+
+这两个方法的原理都是遍历线程池中的工作线程，然后逐个调用线程的interrupt方法来中断线程，所以无法响应中断的线程可能永远停止不了。
+
+区别是：shutdownNow首先将线程池的状态设置成STOP，然后尝试停止所有正在执行或者暂停任务的线程，并返回等待执行任务的列表。
+
+showdown方法将线程池的状态设置为SHUTDOWN，然后中断所有没有正在执行任务的线程。
+
+#### 4、合理地配置线程池
+
+有几个角度可以作为配置线程池的考虑角度：
+
+* 任务的性质：CPU密集型任务、IO密集型任务和混合型任务
+* 任务的优先级：高中低
+* 任务执行的时长：长中短
+* 任务的依赖性：是否依赖于其他系统资源，如数据库连接
+
+CPU密集型的任务尽量配置小线程池，可以配合CPU数量+1的线程池
+
+IO密集型CPU不是一直在执行任务，可以稍微多一点配置值CPU数量*2的线程池
+
+**建议使用有界队列**
+
+#### 5、线程池的监控
+
+## Executor框架
+
+
+
+
+
+
+
+
+
+
 

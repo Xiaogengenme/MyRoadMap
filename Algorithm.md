@@ -422,6 +422,8 @@ public static void heapSort(int[] arr) {
 
 #### [703. 数据流中的第 K 大元素](https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/)
 
+#### 一个元问题：求数组中第k大的数
+
 #### [239. 滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)
 
 
@@ -429,6 +431,60 @@ public static void heapSort(int[] arr) {
 
 
 ### 图
+
+#### 深度优先搜索DFS
+
+#### 广度优先搜索BFS
+
+#### [802. 找到最终的安全状态](https://leetcode-cn.com/problems/find-eventual-safe-states/)
+
+重要，这个是检测图中是否有环的问题，其中三色标记法是Java识别垃圾的重要算法
+
+```java
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        List<Integer> result = new ArrayList<Integer>();
+        int n = graph.length;
+        if (n == 0) return result;
+        int[] color = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (isSafe(graph, color, i)) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    public boolean isSafe(int[][] graph, int[] color, int i) {
+        if (color[i] == 2) {
+            return true;
+        }
+        else if (color[i] == 1) {
+            return false;
+        }
+        else {
+            for (int j : graph[i]) {
+                color[i] = 1;
+                if (!isSafe(graph, color, j)) {
+                    return false;
+                }
+            }
+        }
+        color[i] = 2;
+        return true;
+    }
+}
+```
+
+#### 拓扑排序：如何确定代码源文件的编译依赖关系？
+
+
+
+
+
+
+
+
 
 ### 排序
 
@@ -468,15 +524,9 @@ class Solution {
 }
 ```
 
-##### ⭐️数组中的二分查找
-
-
-
 #### [1818. 绝对差值和](https://leetcode-cn.com/problems/minimum-absolute-sum-difference/)
 
 二分查找降低复杂度的神奇例子：二分查找可以查找出最后一个小于等于目标元素的位置，和第一个大于等于目标元素的位置
-
-<img src="/Users/xiaogengen/Library/Application Support/typora-user-images/截屏2021-07-14 下午5.52.45.png" alt="截屏2021-07-14 下午5.52.45" style="zoom:50%;" />
 
 ```java
 class Solution {
@@ -560,8 +610,6 @@ class Solution {
 }
 ```
 
-
-
 #### [剑指 Offer 53 - I. 在排序数组中查找数字 I](https://leetcode-cn.com/problems/zai-pai-xu-shu-zu-zhong-cha-zhao-shu-zi-lcof/)
 
 二分查找很不错的例子!
@@ -637,9 +685,66 @@ class Solution {
 
 
 }
+
 ```
 
-#### 一个元问题：求数组中第k大的数
+#### [611. 有效三角形的个数](https://leetcode-cn.com/problems/valid-triangle-number/)
+
+本来以为是全排列的变形，回溯查找不同的全排列符合三角形三条边的三元组
+
+但是写不出来全排列哈哈哈哈暂时找着题解里二分查找的方法
+
+排序后通过二分查找后面数组中满足小于e1 + e2的元素个数，那就找第一个大于等于e1 + e2的位置
+
+```java
+class Solution {
+    public int triangleNumber(int[] nums) {
+        /**
+        先排序，然后搜索每一个可能解 */
+        int n = nums.length;
+        Arrays.sort(nums);
+        int result = 0;
+        for (int left = 0; left < n - 2; left++) {
+            for (int right = left + 1; right < n - 1; right++) {
+                result += binary(nums, left, right);
+            }
+        }
+        return result;
+    }
+
+    public int binary(int[] nums, int left, int right) {
+        // 因为e3肯定比e1，e2大，所以只需要e3 < e1 + e2
+        // 二分查找第一个大于等于e1 + e2的值
+        int e1 = nums[left];
+        int e2 = nums[right];
+        int start = right + 1;
+        int end = nums.length - 1;
+        while (start <= end) {
+            int mid = start + ((end - start) >> 1);
+            if (nums[mid] >= e1 + e2) {
+                if (mid == start || nums[mid - 1] < e1 + e2) {
+                    return (mid - right - 1);
+                } else {
+                    end = mid - 1;
+                }
+            } else {
+                start = mid + 1;
+            }
+        }
+        return nums.length - right - 1;    
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
