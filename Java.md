@@ -87,7 +87,24 @@
 
 ![img](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/exception-hierarchy-20210809153839221.png)
 
-### 子类方法可以重写父类的同步方法（synchronized）吗？
+#### 子类方法可以重写父类的同步方法（synchronized）吗？
+
+如果父类中的某个方法使用了 synchronized关键字，而子类中也覆盖了这个方法，默认情况下子类中的这个方法并不是同步的，必须显示的在子类的这个方法中加上 synchronized关键字才可。
+
+#### 构造方法需要同步吗？
+
+构造方法每次由一个线程构造出一个新的对象，不涉及到同步化的问题
+
+
+
+## 关于try-catch-finally的执行顺序与return
+
+1. 不管有没有出现异常，finally中的代码都会执行
+2. try/catch中的return如果有返回值，finally还是会正常运行，try/catch中return的值会先保存成局部变量，在finally执行完成之后再返回
+3. finally中的return值会覆盖掉try中的return值。finally中最好不要有return，不然程序会提前退出不会返回try/catch中的return值
+4. 在try语句中执行System.exit(0)程序会直接退出
+
+> finally不管怎样都会执行，try、catch中的return如果有返回值，finally也会正常执行，不会在try、catch之后就停止，返回值会先存成临时变量之后再finally执行完之后再返回，但是如果finally里面已经return了则try、catch里的return就作废不会返回了
 
 # Java内存空间
 

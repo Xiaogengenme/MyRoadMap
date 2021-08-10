@@ -89,31 +89,6 @@ class Solution {
 
 
 
-#### [218. 天际线问题](https://leetcode-cn.com/problems/the-skyline-problem/)
-
-#### PriorityQueue解析
-
-Java中的PriorityQueue通过完全二叉树实现小顶堆，每个父节点都比自己的左右子节点小。
-
-PriorityQueue保证每次取出来的元素是其中权值最小的。这个权值可以通过重写Comparator构造器进行设置。
-
-![image-20210713163439389](/Users/xiaogengen/Library/Application Support/typora-user-images/image-20210713163439389.png)
-
-priorityQueue可以直接使用数组进行存储，因为是完全二叉树，所以父节点与子节点的元素位置序号是可以直接计算的。
-
-priority的peek和element操作都是常数时间复杂度，add、offer、无参数的remove、poll都是O(log(N))的。
-
-1. add和offer的功能相同，不同点在于二者对于插入失败的处理方法不同，add是抛出异常，offer是返回false。由于涉及到插入之后重新堆化的过程，所以需要O(log(N))的时间复杂度；
-2. element和peek的功能相同，不同点也是在于对于错误的处理方法，element是抛出异常，peek是返回null。由于返回堆顶元素就是数组中0位置的元素，所以时间是O(1)
-3. remove与poll功能相同，不同点是remove失败后抛出异常，poll返回null。由于需要去除掉堆顶元素涉及到堆化，所以需要O(log(N))
-4. remove(Object o)：删除某一个与o相等的元素，如果有多个就删一个。这个分为要删除最后一个元素还是其他元素。如果是要删除最后一个元素就很快，如果不是的话那需要一个堆化的过程。
-
-![截屏2021-07-13 下午4.56.02](/Users/xiaogengen/Library/Application Support/typora-user-images/截屏2021-07-13 下午4.56.02.png)
-
-
-
-
-
 #### [面试题 10.02. 变位词组](https://leetcode-cn.com/problems/group-anagrams-lcci/)
 
 我自己想到的可能是计数的方法，因为题干中说只会出现小写字母，所以使用26长的数组就可以计数
@@ -418,6 +393,43 @@ public static void heapSort(int[] arr) {
 
 #### 实现堆排序
 
+
+
+#### [218. 天际线问题](https://leetcode-cn.com/problems/the-skyline-problem/)
+
+#### PriorityQueue解析
+
+Java中的PriorityQueue通过完全二叉树实现小顶堆，每个父节点都比自己的左右子节点小。
+
+PriorityQueue保证每次取出来的元素是其中权值最小的。这个权值可以通过重写Comparator构造器进行设置。
+
+```java
+/**
+* 使用comparable接口来实现大顶堆
+*/
+PriorityQueue maxHeap = new PriorityQueue(11, new Comparator<Integer>{
+    @Override
+    public int compare(Integer i1, Integer i2) {
+        return i2 - i1;
+    }
+})
+```
+
+
+
+![image-20210713163439389](/Users/xiaogengen/Library/Application Support/typora-user-images/image-20210713163439389.png)
+
+priorityQueue可以直接使用数组进行存储，因为是完全二叉树，所以父节点与子节点的元素位置序号是可以直接计算的。
+
+priority的peek和element操作都是常数时间复杂度，add、offer、无参数的remove、poll都是O(log(N))的。
+
+1. add和offer的功能相同，不同点在于二者对于插入失败的处理方法不同，add是抛出异常，offer是返回false。由于涉及到插入之后重新堆化的过程，所以需要O(log(N))的时间复杂度；
+2. element和peek的功能相同，不同点也是在于对于错误的处理方法，element是抛出异常，peek是返回null。由于返回堆顶元素就是数组中0位置的元素，所以时间是O(1)
+3. remove与poll功能相同，不同点是remove失败后抛出异常，poll返回null。由于需要去除掉堆顶元素涉及到堆化，所以需要O(log(N))
+4. remove(Object o)：删除某一个与o相等的元素，如果有多个就删一个。这个分为要删除最后一个元素还是其他元素。如果是要删除最后一个元素就很快，如果不是的话那需要一个堆化的过程。
+
+![截屏2021-07-13 下午4.56.02](/Users/xiaogengen/Library/Application Support/typora-user-images/截屏2021-07-13 下午4.56.02.png)
+
 #### 利用优先级队列合并k个有序数组
 
 #### [703. 数据流中的第 K 大元素](https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/)
@@ -425,6 +437,12 @@ public static void heapSort(int[] arr) {
 #### 一个元问题：求数组中第k大的数
 
 #### [239. 滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)
+
+#### [313. 超级丑数](https://leetcode-cn.com/problems/super-ugly-number/)
+
+
+
+
 
 
 
@@ -863,3 +881,23 @@ class Solution {
 
 ### 动态规划
 
+# 布隆过滤器
+
+Filter的特点：使用Filter判断一个元素不在数据集中，那这个数据肯定不在；
+
+如果一个元素在数据集中，那么有可能在有可能不在，需要再进行查询。
+
+理解一下Cache和Filter互补的作用
+
+![截屏2021-08-10 上午11.22.30](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Algorithm.assets/截屏2021-08-10 上午11.22.30-8565773.png)
+
+* 主要构成：一个**很长的二进制向量**（比如一个Integer是32位的二进制向量），和一个映射函数。
+* 用于检索一个元素是否在一个集合中
+  * 确定一个数据不存在，就一定不存在
+  * 确定一个数据存在，那不一定在，有误识别
+* 优点：空间效率和查询效率都远远优于其他算法
+* 缺点：有误识别率和删除困难
+
+![截屏2021-08-10 上午11.27.50](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Algorithm.assets/截屏2021-08-10 上午11.27.50-8566084.png)
+
+![截屏2021-08-10 上午11.29.48](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Algorithm.assets/截屏2021-08-10 上午11.29.48-8566201.png)
