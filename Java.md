@@ -147,7 +147,7 @@ Java 虚拟机栈是由一个个栈帧组成，而每个栈帧中都拥有：**�
 
 #### ⭐️字符串常量池
 
-<img src="/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/2019-3String-Pool-Java1-450x249.png" alt="String-Pool-Java" style="zoom:150%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160133.png" alt="String-Pool-Java" style="zoom:150%;" />
 
 > 这里补充一点，如果再new一个s4也是”Cat“，
 
@@ -172,7 +172,7 @@ System.out.println(str3 == str5);//true
 System.out.println(str4 == str5);//false
 ```
 
-![字符串拼接](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/字符串拼接-常量池2.png)
+![字符串拼接](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160140.png)
 
 字符串拼接中的锁消除问题：
 
@@ -215,7 +215,7 @@ System.out.println(s1.equals(s2));// 输出 true
 
 数组 + 链表 + 红黑树
 
-<img src="https://img-blog.csdn.net/20170803204952538?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbG9naW5fc29uYXRh/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="存储结构" style="zoom:75%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160146.png" alt="存储结构" style="zoom:75%;" />
 
 数组就是指Node[] table数组，Node是：
 
@@ -390,7 +390,7 @@ ConcurentHashMap完成对HashMap线程安全方面的升级。
 
 元素在重新计算Hash之后，因为n变为了两倍，所以只需要判断新增的高位是0还是1就好，如果是0那么这个node还是映射到原来的位置，如果是1就是映射到原来的位置+原来的size的位置
 
-![这里写图片描述](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/SouthEast.jpeg)
+![这里写图片描述](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160153.jpeg)
 
 
 
@@ -406,7 +406,7 @@ ConcurentHashMap完成对HashMap线程安全方面的升级。
 
 ### 1. Exception类：
 
-![img](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/exception-hierarchy.png)
+![img](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160155.png)
 
 ### 2. 捕获异常
 
@@ -509,7 +509,7 @@ public class Singleton {
 
 ### 2. 线程池对任务的处理流程⭐️
 
-![截屏2021-08-05 上午12.05.49](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/截屏2021-08-05 上午12.05.49.png)
+![截屏2021-08-05 上午12.05.49](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812160203.png)
 
 ```java
 public void execute(Runnable command) {
