@@ -255,24 +255,26 @@ transient int size;     // HashMap中实际存在的Node数量
 
 常规的设计是把桶的大小设计为素数。相对来说素数导致冲突的概率要小于合数，Hashtable初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。HashMap采用这种非常规设计，**主要是为了在取模和扩容时做优化，同时减少冲突**，HashMap定位哈希桶索引位置时，也加入了高位参与运算的过程。
 
-#### ⭐️红黑树
+### ⭐️红黑树
 
-##### 红黑树的四个特点：
+#### 红黑树的四个特点：
 
 1. 根节点是黑色节点
 2. 叶子节点是黑色的**空节点**，不存储数据
 3. 每两个红色节点不能相邻
 4. 每个（不是非得红色）节点到它可达的叶子节点的路径上必须要有相同数量的黑色节点
 
-##### 红黑树是完全平衡的吗？为什么？
+#### 红黑树是完全平衡的吗？为什么？
 
 不是完全平衡的，红黑树只是做到总体高度接近于log2n
 
-##### 红黑树为什么是接近平衡的，如何证明高度接近于log2n?
+#### 红黑树为什么是接近平衡的，如何证明高度接近于log2n?
+
+#### ⭐️红黑树如何保持平衡？
 
 
 
-##### 红黑树和平衡二叉树的区别？他俩之间的性能差异和取舍
+#### 红黑树和平衡二叉树的区别？他俩之间的性能差异和取舍
 
 我们前面提到 Treap、Splay Tree，绝大部分情况下，它们操作的效率都很高，但是也无法避免极端情况下时间复杂度的退化。尽管这种情况出现的概率不大，但是对于单次操作时间非常敏感的场景来说，它们并不适用。
 
@@ -300,7 +302,7 @@ static int indexFor(int h, int length) {
 }
 ```
 
-主要分为三步：
+**主要分为三步：**
 
 1. 取Key的HashCode值：h = key.hashCode();
 2. 高位参与运算：h ^ (h >> 16)
@@ -310,7 +312,79 @@ static int indexFor(int h, int length) {
 
 取模运算的解释：**当length总是2的n次方时，h& (length-1)运算等价于对length取模**
 
-#### （2）put操作
+#### （2）⭐️put操作的详细流程
+
+粘一下源码，扩容操作其实是先进行元素的插入之后在扩容的：
+
+```java
+public V put(K key, V value) {
+    // 对key的hashCode()做hash
+    return putVal(hash(key), key, value, false, true);
+}
+
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+               boolean evict) {
+    Node<K,V>[] tab; Node<K,V> p; int n, i;
+    // 步骤①：tab为空则创建
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;
+    // 步骤②：计算index，并对null做处理 
+    if ((p = tab[i = (n - 1) & hash]) == null) 
+        tab[i] = newNode(hash, key, value, null);
+    else {
+        Node<K,V> e; K k;
+        // 步骤③：节点key存在，直接覆盖value
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;
+        // 步骤④：判断该链为红黑树
+        else if (p instanceof TreeNode)
+            e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+        // 步骤⑤：该链为链表
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key,value,null);
+                     //链表长度大于8转换为红黑树进行处理
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st  
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                 // key已经存在直接覆盖value
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k)))) 
+                           break;
+                p = e;
+            }
+        }
+
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+
+    ++modCount;
+    // 步骤⑥：超过最大容量 就扩容
+    if (++size > threshold)
+        resize();
+    afterNodeInsertion(evict);
+    return null;
+}
+```
+
+#### ⭐️HashMap是线程安全的吗？什么情况下会出现环？
+
+#### ⭐️ConcurrentHashMap
+
+ConcurentHashMap完成对HashMap线程安全方面的升级。
+
+* ConcurrentHashMap是有**Segment数组结构**和**HashEntry数组结构**组成，Segment数组结构为分段锁，HashEntry数组结构用于存储键值对
+* Segment是一种**可重入锁ReentrantLock**；Segment数组是一个数组+链表的结构，一个Segment里面包含一个HashEntry数组
+* ConcurrentHashMap键值不能为null
 
 #### （3）扩容机制
 
@@ -564,6 +638,8 @@ IO密集型CPU不是一直在执行任务，可以稍微多一点配置值CPU数
 ## Executor框架
 
 
+
+# Java中的锁
 
 
 
