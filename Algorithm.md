@@ -1,3 +1,7 @@
+---
+typora-copy-images-to: upload
+---
+
 * 结构思维，归类思想
 * 做笔记：简单的思路提示
 * 复习！！！

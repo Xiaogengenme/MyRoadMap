@@ -1,6 +1,6 @@
 网络分层结构：
 
-![image-20210804151814729](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/image-20210804151814729.png)
+![image-20210804151814729](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155702.png)
 
 ## HTTP协议
 
@@ -26,7 +26,7 @@ HTTP请求包含三个部分：请求行、请求首部与请求内容
 
   
 
-![截屏2021-08-04 下午1.58.04](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/截屏2021-08-04 下午1.58.04.png)
+![截屏2021-08-04 下午1.58.04](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155711.png)
 
 * 请求头部字段
 
@@ -49,7 +49,7 @@ HTTP请求包含三个部分：请求行、请求首部与请求内容
 
 所以在高并发场景下，我们需要使用一个接入层，将静态资源请求拦截在服务器外面
 
-<img src="/Users/xiaogengen/Library/Application Support/typora-user-images/截屏2021-08-04 下午2.11.14.png" alt="截屏2021-08-04 下午2.11.14" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155735.png" alt="截屏2021-08-04 下午2.11.14" style="zoom:50%;" />
 
 和这个场景关系较大的就是nginx服务器，将静态资源的请求转发到Varnish服务器，将动态资源的请求发送到Redis服务器。对于Varnish服务器，只有静态资源过期时才会访问到Tomcat服务器。
 
@@ -99,7 +99,7 @@ TCP头中含有端口号，收信人的HTTP服务器会监听某个端口号，�
 
 ### HTTP返回报文
 
-<img src="/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/截屏2021-08-04 下午3.12.08.png" alt="截屏2021-08-04 下午3.12.08" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155741.png" alt="截屏2021-08-04 下午3.12.08" style="zoom:50%;" />
 
 
 
@@ -279,13 +279,13 @@ HTTPS建立连接的过程主要有以下三个步骤：客户端验证服务器
 
 #### 欧洲十国游类型
 
-<img src="/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/截屏2021-08-04 下午2.40.31.png" alt="截屏2021-08-04 下午2.40.31" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155758.png" alt="截屏2021-08-04 下午2.40.31" style="zoom:50%;" />
 
 整个流程下来**IP地址是不变的**，服务器A通过IP地址层层转发找到服务器B，期间每次转发都会通过ARP协议来获取下一跳的MAC地址，并更新源MAC地址和目标MAC地址。
 
 #### 玄奘西行类型——公网与NAT
 
-![截屏2021-08-04 下午2.40.58](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/截屏2021-08-04 下午2.40.58.png)
+![截屏2021-08-04 下午2.40.58](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155755.png)
 
 服务器需要访问公网时，需要经过NAT网关将**内网IP地址转换为公网的IP地址**，服务器A想访问服务器B，需要知道服务器B在公网上的IP地址，到达服务器B的网关时再将目标IP地址转化为内网的地址。整个过程源IP地址并不需要改变成公网IP。
 
