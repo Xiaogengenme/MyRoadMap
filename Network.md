@@ -1,6 +1,28 @@
 网络分层结构：
 
-![image-20210804151814729](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155702.png)
+![image-20210804151814729](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210816112517.png)
+
+## TCP协议。。。
+
+#### TCP四次握手的流程和状态变化
+
+#### TCP关闭一个连接具体是怎么关闭的
+
+#### 除了客户端可以关闭连接服务器端也可以关闭连接吗？
+
+#### ⭐️TCP为什么是可靠的？
+
+#### ⭐️TCP的拥塞控制
+
+#### UDP和TCP可以用于广播吗？如何广播？
+
+#### TCP和HTTP的关系
+
+##### 
+
+
+
+
 
 ## HTTP协议
 
@@ -26,11 +48,11 @@ HTTP请求包含三个部分：请求行、请求首部与请求内容
 
   
 
-![截屏2021-08-04 下午1.58.04](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155711.png)
+![截屏2021-08-04 下午1.58.04](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210816112545.png)
 
 * 请求头部字段
 
-![截屏2021-08-04 下午1.59.03](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Network.assets/截屏2021-08-04 下午1.59.03.png)
+![截屏2021-08-04 下午1.59.03](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210816112545.png)
 
 #### GET和POST方法的区别
 
@@ -99,7 +121,7 @@ TCP头中含有端口号，收信人的HTTP服务器会监听某个端口号，�
 
 ### HTTP返回报文
 
-<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210812155741.png" alt="截屏2021-08-04 下午3.12.08" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/20210816112557.png" alt="截屏2021-08-04 下午3.12.08" style="zoom:50%;" />
 
 
 
@@ -164,6 +186,10 @@ TCP头中含有端口号，收信人的HTTP服务器会监听某个端口号，�
 - **多路复用**（MultiPlexing），即连接共享，即每一个request都是是用作连接共享机制的。一个request对应一个id，这样一个连接上可以有多个request，每个连接的request可以随机的混杂在一起，接收方可以根据request的 id将request再归属到各自不同的服务端请求里面。
 - **header压缩**，如上文中所言，对前面提到过HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。
 - **服务端推送**（server push），同SPDY一样，HTTP2.0也具有server push功能
+
+#### HTTP复用？。。。
+
+##### HTTP2.0之前没有复用，会带来什么结果？。。。
 
 ### cookie与session的区别
 
@@ -260,6 +286,36 @@ HTTPS建立连接的过程主要有以下三个步骤：客户端验证服务器
 
 
 ## DNS
+
+### DNS服务器
+
+<img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/202108181607953.png" alt="截屏2021-08-18 下午4.07.34" style="zoom:50%;" />
+
+* 根DNS服务器：返回顶级DNS服务器地址
+* 顶级DNS服务器：返回权威DNS服务器地址
+* 权威DNS服务器：返回相应主机地址
+
+### DNS的解析流程
+
+1. 浏览器输入一个网址，发送DNS请求查找网址相应的IP地址。首先会发送给本地DNS服务器，本地DNS服务器一般是提供网络的运行商提供，并通过本地的DHCP配置在电脑上。
+
+2. 如果本地的DNS服务器中没有想要找的域名对应的地址，那么本地DNS服务器接下来回去请求它对应的根DNS服务器。
+
+3. 根域名服务器将请求分发到下一级的顶级DNS服务器
+
+4. 顶级DNS服务器将请求再分发到再下一级权威DNS服务器
+
+5. 权威DNS服务器会有结果IP地址，将这个IP地址返回给本地DNS服务器
+
+6. 本地DNS服务器将结果返回给客户端
+
+   <img src="https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/202108181714423.png" alt="截屏2021-08-18 下午5.14.25" style="zoom: 67%;" />
+
+### 负载均衡
+
+一个应用如果想要访问数据库，那么我们在应用中最好配置的是这个数据库的域名而不是数据库的IP地址，通过DNS进行IP地址的查询，这样数据库的IP发生变化的时候就不用去改应用中的IP地址。
+
+更进一步，如果我们的应用被部署在多个服务器上，如果使用IP地址进行访问就是一对一的访问，这样如果访问量过大应用会承受不住，通过域名来访问应用，DNS可以每次给访问者不同的IP地址来进行应用的负载均衡。
 
 ## CDN
 

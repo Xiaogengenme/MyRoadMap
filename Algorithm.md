@@ -217,9 +217,21 @@ class Solution {
 }
 ```
 
+#### 两个有序数组的公共元素（Shopee）
 
+1. 对于数组A中的每一个元素遍历B
+2. 对于数组A中的每一个元素二分查找B
+3. HashSet：时间复杂度O(M + N)，包括存入Set的O(M)和搜索的O(N)，但是空间复杂度要O(M)
+4. 双指针，小的向前走，大的不动，相同的一起动，时间复杂度O(M + N)，空间复杂度O(1)
+
+ 如果一个数组有一亿个元素，一个数组有一千个元素，这样可以如何优化？
+回答：我答的是大数组二分，裁出合适的区间，再去和小数组进行双指针操作
 
 ### 栈与队列
+
+#### ♻️[232. 用栈实现队列](https://leetcode-cn.com/problems/implement-queue-using-stacks/)
+
+#### ♻️[225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
 
 ### 散列表
 

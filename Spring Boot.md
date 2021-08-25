@@ -24,6 +24,57 @@ Spring对于Bean的管理包括两个方面：创建对象和注入属性
 
 
 
+# 《Spring实战》
+
+## 第一章 Spring起步
+
+Spring提供了一个容器，称为Spring应用上下文，它们会创建和管理应用组件，这个组件就是Bean
+
+Bean之间装配在一起是通过DI依赖注入来实现。
+
+历史上我们我们指导Spring应用上下文来进行bean装配一般是使用一个或多个XML文件（描述各个组件以及它们之间的依赖关系）
+
+```xml
+<bean id="inventoryService"
+      class="com.example.InventoryService"/>
+
+<bean id="productService"
+      class="com.example.ProductService" />
+	<constructor-arg ref="inventoryService"/>
+</bean>
+```
+
+而目前基于Java的配置类时更常见的方法：
+
+```java
+@Configuration
+public class ServiceConfiguration {
+    @Bean
+    public InventoryService inventoryService() {
+        return new InventoryService();
+    }
+
+    @Bean
+    public ProductService productService() {
+        return new ProductService(inventoryService());
+    }
+}
+```
+
+这个配置类方法使用@Bean注解，**表明这些方法所返回的对象会以bean的形式添加到Spring的IoC容器中**。
+
+（通常情况下bean ID与定义他们的方法名称是相同的）
+
+不论是Java还是XML的显式配置，只有当Spring不能进行自动装配时才是必要的。
+
+Spring Boot自动装配原理之后学习。
+
+
+
+
+
+
+
 ## 那些关于组件的注解
 
 ### @Configuration
