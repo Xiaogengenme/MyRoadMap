@@ -74,6 +74,10 @@
 * static方法不能被重写
 * 构造方法不能被重写
 
+附，异常层次表
+
+![img](https://raw.githubusercontent.com/Xiaogengenme/ImagesResource/main/202108301504860.png)
+
 附，权限作用表
 
 |             | 自己类内部 | 同一个包下的类 | 子类 | 其他包下得类 |
@@ -83,9 +87,7 @@
 | no modifier | ✔️          | ✔️              | 达咩 | 达咩         |
 | private     | ✔️          | 达咩           | 达咩 | 达咩         |
 
-附，异常层次表
 
-![img](/Users/xiaogengen/Desktop/秋招/MyRoadMap/Java.assets/exception-hierarchy-20210809153839221.png)
 
 #### 子类方法可以重写父类的同步方法（synchronized）吗？
 
