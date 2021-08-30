@@ -1,6 +1,6 @@
-# Spring基础概念
+# Spring面试
 
-## Spring的结构
+## Spring framework的基本结构有哪些？
 
 > 在面试中被问到Spring的基本结构或者说是Spring中最常被用到的包有哪些？
 
@@ -17,6 +17,68 @@
 bean 是一个被实例化，组装，并通过 Spring IoC 容器所管理的对象。
 
 Spring对于Bean的管理包括两个方面：创建对象和注入属性
+
+### Spring IoC的理解
+
+控制反转：将原本在程序中手动创建对象的权利交由Spring框架来管理。
+
+为实现IOC，Spring提供了一个容器用于创建和管理组件，也就是我们所说的Bean。
+
+这些组件之间存在一些依赖关系，需要Spring容器对这些依赖组件进行装配，装配通过依赖注入（DI）的方式来实现。组件自己不会再去创建它所依赖的组件并管理它们的声明周期，而是都交给Spring容器来创建和维护所有的组件，然后在组件被需要的地方将其注入进去。
+
+而组件之间的依赖关系可以由XML类型的描述文件或者Java @Configuration的配置类来定义，并由Spring来进行组件的装配。
+
+当然这两种方式都是在Spring无法进行自动装配的时候才会被启用。
+
+### Spring Bean
+
+bean指的就是那些由IOC容器创建管理的组件。
+
+与Spring IOC和Spring Bean相关的包主要有`org.springframework.beans`和`org.springframework.context`
+
+#### Spring Bean的创建过程/生命周期⭐️
+
+1. Bean容器找到Spring Bean 定义的地方，配置文件，可能是XML，也可能是Java配置类，当然这个是在自动配置不生效的情况下
+
+2. Bean容器通过Java Reflection API创建一个Bean的对象实例
+
+3. 使用set方法设置属性值
+
+   > 怎么调用set方法设置？
+
+4. 检查Bean实现的Aware接口，包括BeanNameAware接口、BeanClassLoaderAware接口、BeanClassLoaderAware接口、BeanFactoryAware接口，如果有就调用相关的set方法设置属性
+
+   > Aware方法有什么用？
+
+> 接下来更看不懂了，等下看一下视频
+
+#### Spring Bean的作用域
+
+- **singleton** : 唯一 bean 实例，Spring 中的 bean 默认都是单例的，对单例设计模式的应用。
+- **prototype** : 每次请求都会创建一个新的 bean 实例。
+- **request** : 每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP request 内有效。
+- **session** : 每一次 HTTP 请求都会产生一个新的 bean，该 bean 仅在当前 HTTP session 内有效。
+- 还有一个**global-session**看不懂干嘛的不重要了
+
+配置Bean的作用域：
+
+1. XML方式
+
+```xml
+<bean id="..." class="..." scope="singleton"></bean>
+```
+
+2. Java配置类
+
+```java
+@Bean
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public Person personPrototype() {
+    return new Person();
+}
+```
+
+#### Spring Boot的启动流程
 
 
 
@@ -75,7 +137,7 @@ Spring Boot自动装配原理之后学习。
 
 
 
-## 那些关于组件的注解
+## 那些关于组件的注解：配置类
 
 ### @Configuration
 
@@ -523,6 +585,9 @@ public class RequestController {
     }
 }
 ```
+
+
+
 
 
 
