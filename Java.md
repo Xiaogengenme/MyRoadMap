@@ -603,15 +603,13 @@ new 一个 Thread，线程进入了新建状态。调用 `start()`方法，会�
 
 #### Synchronized为什么是重量级的？
 
-SYnchronized的执行原理是在需要加锁的指令集前后添加Monitor Enter和Monitor Exit两条字节码指令，这两条字节码指令的执行是用过操作系统的mutex lock指令来执行。
-
-Java中的线程都是对应这操作系统中的线程，如果要对线程进行挂起和唤醒操作，要进行加锁解锁操作时，需要将操作系统从用户态转换为内核态。
+Synchronized的执行原理是在需要加锁的指令集前后添加Monitor Enter和Monitor Exit两条字节码指令，这两条字节码指令的执行下层是通过操作系统的mutex lock指令来执行，Java的线程实际上是操作系统线程的映射，如果要对线程进行挂起和唤醒操作，要进行加锁解锁操作时，需要将操作系统从用户态转换为内核态。
 
 #### Java中锁的升级过程⭐️
 
 ##### 无锁
 
-1. 对象的访问不会出现多线程竞争，有两种情况，不会有多线程的访问，或者有多线程的访问但是不涉及多线程问题
+1. 对象的访问不会出现在多线程环境下或者出现在多线程环境下也不会出现多线程竞争的问题
 
 2. 存在多线程竞争，但是我们使用非锁方式，比如CAS
 
@@ -680,70 +678,6 @@ public class Singleton {
 2. AQS的结构（含有多少条队列？)
 
 3. 有哪些基于AQS的实现类
-
-### ReentrantLock
-
-#### ReentrantLock的设计
-
-以AQS最典型的实现ReentrantLock为例，ReentrantLock通过AQS的特性实现了一个独占式的，可重入的锁，并且可以实现公平和非公平锁。具体的实现方式是在ReentrantLock的实现中首先实现一个继承AQS的子类Sync，定义一些模版方法，然后再设计Sync的两个子类FairSync和NonFairSync
-
-其中，非公平锁获取锁资源会首先尝试插队，如果失败则进入阻塞队列排队等待
-
-```java
-// 写得非常好的伪代码
-static final class NonfiarSync extends Sync {
-  final void lock() {
-    if (compareAndSetState(0, 1)) {
-      setExclusiveOwnerThread(Thread.currentThread());
-    } else {
-      acquire(1);
-    }
-  }
-}
-```
-
-公平锁直接进入排队队列进行等待
-
-```java
-static final class FairSync extends Sync {
-  final void lock() {
-    acquire(1);
-  }
-}
-```
-
-acquire方法一定会获取到锁！！
-
-#### ReentrantLock与Synchronized的区别
-
-* 两者都是可重入锁
-* 实现层面不一样，Synchronized关键字是JVM底层通过Monitor enter和Monitor exit指令实现的，而ReentrantLock是上层通过API实现的。
-* ReentrantLock相比于Synchronized增加了一些高级功能，包括：
-  1. **等待可中断** : `ReentrantLock`提供了一种能够中断等待锁的线程的机制，通过 `lock.lockInterruptibly()` 来实现这个机制。也就是说正在等待的线程可以选择放弃等待，改为处理其他事情。
-  2. **可实现公平锁** : `ReentrantLock`可以指定是公平锁还是非公平锁。**而`synchronized`只能是非公平锁**。所谓的公平锁就是先等待的线程先获得锁。`ReentrantLock`默认情况是非公平的，可以通过 `ReentrantLock`类的`ReentrantLock(boolean fair)`构造方法来制定是否是公平的。
-  3. **可实现选择性通知（锁可以绑定多个条件）**: `synchronized`关键字与`wait()`和`notify()`/`notifyAll()`方法相结合可以实现等待/通知机制。`ReentrantLock`类当然也可以实现，但是需要借助于`Condition`接口与`newCondition()`方法。
-
-#### ReentrantLock如何进行加锁解锁？
-
-ReetrantLock在使用时要记得在finally块中添加解锁操作，以防在执行过程中出现错误抛出异常，没有解锁的问题。
-
-```java
-Class X {
-  private final ReentrantLock lock = new ReentrantLock();
-  
-  public void f() {
-    // 是在try的外面先加锁！！！！tmd！！！
-    lock.lock();
-    try {
-      // do something
-    } catch (Exception e) {
-      
-    }finally {
-      lock.unlock();
-    }
-  }
-}
-```
 
 ## 线程池
 
